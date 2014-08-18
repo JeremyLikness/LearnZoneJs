@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Learn Zone Part 7: Instrumentation</title>
+    <script src="angular.js"></script>
+    <script src="zone.js"></script>
+    <script src="zones/zoneMarker.js"></script>
+    <script src="zones/performanceZone.js"></script>
+</head>
+<body>
+<h1>A Zone that Instruments an Angular App</h1>
+<h2><a href="index.html">Back to TOC</a></h2>
+<p>This example shows how you can use Zone to instrument your app and gain insights about how long and how often code executes.</p>
+<div data-ng-controller="ctrl as ctrl">
+    <ul>
+        <li data-ng-repeat="seq in ctrl.sequence track by $index">{{seq}}&nbsp;</li>
+    </ul>
+</div>
+<script type="text/javascript">
+
+    var lastNum = 0, curNum = 1;
+
+    function Controller (sequence, $timeout) {
+        var _this = this;
+        this.sequence = [sequence.curNum];
+
+        function iterate() {
+            zone.mark = 'Iteration';
+            var iteration = sequence.iterate();
+            if (iteration > 999999999) {
+                return;
+            }
+            _this.sequence.push(iteration);
+            $timeout(iterate, 500);
+        }
+
+        iterate();
+    }
+
+    function Sequence () {
+    }
+
+    angular.extend(Sequence.prototype, {
+        lastNum: 0,
+        curNum: 1,
+        iterate: function () {
+            var newNum = this.lastNum + this.curNum, idx = 0;
+            for (idx = 0; idx < newNum; idx += 1) {
+                angular.noop();
+            }
+            this.lastNum = this.curNum;
+            this.curNum = newNum;
+            return newNum;
+        }
+    });
+
+    function myApp() {
+        angular.module('myApp', [])
+                .service('sequence', Sequence)
+                .controller('ctrl', ['sequence', '$timeout', Controller]);
+        zone.mark = 'Initializing the app.';
+        angular.bootstrap(document.body, ['myApp']);
+    }
+
+    zone.fork(zone.zoneMarker).fork(zone.performanceZone).run(myApp);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Learn Zone Part 2: Add Zone</title>
+    <script src="zone.js"></script>
+    <script src="zones/myZone.js"></script>
+</head>
+<body>
+<h1>Zone</h1>
+<h2><a href="index.html">Back to TOC</a></h2>
+<p>Click the button again. Note how the console logs the various events automatically (the only change to the main code
+is setting the markers for the zones) and the call stack is now enhanced to show the full history.</p>
+<button id="btnClick">Click Me!</button>
+<div id="divContent"></div>
+<script type="text/javascript">
+
+    function myApp() {
+
+        zone.mark = 'Initializing the app.';
+
+        var btn = document.getElementById('btnClick'),
+                div = document.getElementById('divContent');
+
+        function setDiv() {
+            zone.mark = 'Setting up the DIV';
+            var text = document.createTextNode('Content Updated!');
+            div.appendChild(text);
+            throw new Error('Oops!');
+        }
+
+        function click() {
+            zone.mark = 'Clicking the button';
+            btn.disabled = true;
+            btn.innerHTML = 'Clicked.';
+            setTimeout(setDiv, 500);
+        }
+
+        btn.addEventListener('click', click);
+    }
+
+    zone.fork(zone.myZone).run(myApp);
+
+</script>
+</body>
+</html>

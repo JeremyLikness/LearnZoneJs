@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Learn Zone Part 6: Redirecting Alerts</title>
+    <script src="zone.js"></script>
+    <script src="zones/zoneMarker.js"></script>
+    <script src="zones/redirectAlertZone.js"></script>
+</head>
+<body>
+<h1>A Zone that Redirects Alert</h1>
+<h2><a href="index.html">Back to TOC</a></h2>
+<p>This zone intercepts the alert to avoid annoying dialogs.</p>
+<input type="text" id="myText"/>
+<button id="btnClick">Alert Me!</button>
+<div id="divContent"></div>
+<script type="text/javascript">
+
+    function myApp() {
+
+        zone.mark = 'Initializing the app.';
+
+        var btn = document.getElementById('btnClick'),
+                div = document.getElementById('divContent'),
+                text = document.getElementById('myText');
+
+        var clickCount = 0;
+
+        function click() {
+            clickCount += 1;
+            zone.mark = 'Clicking the button ' + clickCount;
+            alert(text.value);
+            text.value = '';
+            if (zone.lastAlert) {
+                div.innerText += '\n' + zone.lastAlert;
+            }
+        }
+
+        btn.addEventListener('click', click);
+    }
+
+    zone.fork(zone.zoneMarker).fork(zone.redirectAlertZone).run(myApp);
+
+</script>
+</body>
+</html>

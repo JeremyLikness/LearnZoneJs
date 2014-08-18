@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Learn Zone Part 5: Capturing Timeouts</title>
+    <script src="zone.js"></script>
+    <script src="zones/zoneMarker.js"></script>
+    <script src="zones/captureZone.js"></script>
+</head>
+<body>
+<h1>A Zone that Captures Timeouts</h1>
+<h2><a href="index.html">Back to TOC</a></h2>
+<p>In this example, Zone is used to capture calls to setTimeout. You can then "release" the captures and execute them at
+will. Notice that besides setting the marker, the code is not aware that anything external is happening.</p>
+<button id="btnClick">Click Me!</button>
+<button id="btnRelease" disabled="disabled">Release</button>
+<div id="divContent"></div>
+<script type="text/javascript">
+
+    function myApp() {
+
+        zone.mark = 'Initializing the app.';
+
+        var btn = document.getElementById('btnClick'),
+                div = document.getElementById('divContent'),
+                release = document.getElementById('btnRelease'),
+                clickCount = 0;
+
+        function setDiv() {
+            zone.mark = 'Setting up the DIV';
+            var text = document.createTextNode('Content Updated! ');
+            div.appendChild(text);
+        }
+
+        function click() {
+            clickCount += 1;
+            zone.mark = 'Clicking the button ' + clickCount;
+            btn.innerHTML = 'Click Me Again!';
+            setTimeout(setDiv, 500);
+        }
+
+        function releaseCaptures() {
+            zone.mark = 'Release captured timeouts.';
+            release.disabled = true;
+            zone.release();
+        }
+
+        btn.addEventListener('click', click);
+
+        if (zone.register) {
+            zone.register(function () {
+                release.disabled = false;
+                release.addEventListener('click', releaseCaptures);
+            });
+        }
+    }
+
+    zone.fork(zone.zoneMarker).fork(zone.captureZone).run(myApp);
+
+</script>
+</body>
+</html>

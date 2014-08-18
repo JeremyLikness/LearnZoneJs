@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Learn Zone Part 1: No Zone</title>
+</head>
+<body>
+<h1>No Zone</h1>
+<h2><a href="index.html">Back to TOC</a></h2>
+<p>Here is a mini-app without zone. Click the button to update the DOM and throw an exception, but notice how the
+exception stack trace doesn't provide much information about where the click event came from.</p>
+<button id="btnClick">Click Me!</button>
+<div id="divContent"></div>
+<script type="text/javascript">
+
+    function myApp() {
+
+        var btn = document.getElementById('btnClick'),
+                div = document.getElementById('divContent');
+
+        function setDiv() {
+            var text = document.createTextNode('Content Updated!');
+            div.appendChild(text);
+            throw new Error('Oops!');
+        }
+
+        function click() {
+            btn.disabled = true;
+            btn.innerHTML = 'Clicked.';
+            setTimeout(setDiv, 500);
+        }
+
+        btn.addEventListener('click', click);
+    }
+
+    myApp();
+
+</script>
+</body>
+</html>

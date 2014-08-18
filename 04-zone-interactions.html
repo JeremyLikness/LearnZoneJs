@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Learn Zone Part 4: Zone Interactions</title>
+    <script src="zone.js"></script>
+    <script src="zones/beforeZone.js"></script>
+    <script src="zones/errorZone.js"></script>
+    <script src="zones/pointlessZone.js"></script>
+    <script src="zones/zoneMarker.js"></script>
+</head>
+<body>
+<h1>Zone Boundaries and Interactions</h1>
+<h2><a href="index.html">Back to TOC</a></h2>
+<p>This example enhances the zone to note when the zones are created.</p>
+<button id="btnClick">Click Me!</button>
+<div id="divContent"></div>
+<script type="text/javascript">
+
+    function myApp() {
+
+        zone.mark = 'Initializing the app.';
+
+        var btn = document.getElementById('btnClick'),
+                div = document.getElementById('divContent');
+
+        function setDiv() {
+            zone.mark = 'Setting up the DIV';
+            var text = document.createTextNode('Content Updated!');
+            div.appendChild(text);
+            throw new Error('Oops!');
+        }
+
+        function click() {
+            zone.mark = 'Clicking the button';
+            btn.disabled = true;
+            btn.innerHTML = 'Clicked.';
+            setTimeout(setDiv, 500);
+        }
+
+        btn.addEventListener('click', click);
+    }
+
+    function announceZone(subZone, name) {
+        subZone.onZoneCreated = function () {
+            console.log('An instance of zone ' + name + ' was created.');
+        };
+    }
+
+    announceZone(zone.errorZone, 'Error');
+    announceZone(zone.zoneMarker, 'Marker');
+    announceZone(zone.pointlessZone, 'Pointless');
+    announceZone(zone.beforeZone, 'Before');
+
+    zone.fork(zone.errorZone).fork(zone.zoneMarker).fork(zone.pointlessZone).fork(zone.beforeZone).run(myApp);
+
+</script>
+</body>
+</html>
