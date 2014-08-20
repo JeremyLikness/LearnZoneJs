@@ -14,7 +14,7 @@ zone.captureZone = {
         console.log('Released captured timeouts.');
     },
     onZoneCreated: function () {
-        console.log('Pointless zone was created.');
+        console.log('Capture zone was created.');
     },
     setTimeout: function (fn) {
         var idx;

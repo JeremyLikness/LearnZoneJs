@@ -42,6 +42,7 @@ will. Notice that besides setting the marker, the code is not aware that anythin
         function releaseCaptures() {
             zone.mark = 'Release captured timeouts.';
             release.disabled = true;
+            release.removeEventListener('click', releaseCaptures);
             zone.release();
         }
 
@@ -49,8 +50,10 @@ will. Notice that besides setting the marker, the code is not aware that anythin
 
         if (zone.register) {
             zone.register(function () {
-                release.disabled = false;
-                release.addEventListener('click', releaseCaptures);
+                if (release.disabled) {
+                    release.disabled = false;
+                    release.addEventListener('click', releaseCaptures);
+                }
             });
         }
     }
